@@ -35,4 +35,18 @@ class ProductAge extends ObjectModel
 
         return DB::getInstance()->getValue($sql);
     }
+
+    public static function getMaxAgeByProduct($id_product)
+    {
+        $sql = 'SELECT max_age FROM '._DB_PREFIX_.'product_age WHERE id_product = '.(int)$id_product;
+
+        return DB::getInstance()->getValue($sql);
+    }
+
+    public static function getProductByMaxAge($max_age)
+    {
+        $sql = 'SELECT id_product FROM '._DB_PREFIX_.'product_age WHERE max_age >= '.(int)$max_age;
+
+        return DB::getInstance()->executeS($sql);
+    }
 }

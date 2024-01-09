@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once _PS_MODULE_DIR_.'productbyage/classes/ProductAge.php';
+
 class ProductByAge extends Module
 {
     public function __construct()
@@ -60,6 +62,8 @@ class ProductByAge extends Module
         !Configuration::updateValue('AGEHOMEACTIVE',0) ||
         !$this->registerHook('displayAdminProductsExtra') ||
         !$this->registerHook('actionProductUpdate') ||
+        !$this->registerHook('displayContentWrapperBottom') ||
+        !$this->registerHook('displayHeader') ||
         !$this->createTable()
         
         ) {
@@ -77,6 +81,8 @@ class ProductByAge extends Module
         !Configuration::deleteByName('AGEHOMEACTIVE') ||
         !$this->unregisterHook('displayAdminProductsExtra') ||
         !$this->unregisterHook('actionProductUpdate') ||
+        !$this->unregisterHook('displayContentWrapperBottom') ||
+        !$this->unregisterHook('displayHeader') ||
         !$this->deleteTable()
         
         ) {
@@ -213,7 +219,7 @@ class ProductByAge extends Module
     {
         return DB::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS '._DB_PREFIX_.'product_age(
-                id_product_age INT UNSIGNED NOT NULL,
+                id_product_age INT UNSIGNED NOT NULL AUTO_INCREMENT,
                 id_product INT UNSIGNED NOT NULL,
                 min_age INT NOT NULL,
                 max_age INT NOT NULL,
@@ -259,7 +265,7 @@ class ProductByAge extends Module
         // $product->save();
 
         $existingInBdd = ProductAge::getExistInBdd($productId);
-        
+
         // var_dump($existingInBdd);
         // die();
 
@@ -272,14 +278,31 @@ class ProductByAge extends Module
             ProductAge::insertAgeProduct($productId, $minAgeProduct, $maxAgeProduct);
         }
     }
+    //
 
+
+    // page product boutique
     public function hookDisplayReassurance($params)
     {
+        $link = new Link();
         if(Configuration::get('ACTIVATEAGE') == 1)
         {
             if(Configuration::get('AGEPRODUCTPAGE') == 1)
             {
-                // $existingInBdd = ProductAge::getAgeByProductId($params["product"]->id);
+                $product = $params["smarty"]->tpl_vars;
+                $existingInBdd = ProductAge::getExistInBdd($product["product"]->value["id"]);
+
+                if($existingInBdd == true)
+                {
+                    $maxAge = ProductAge::getMaxAgeByProduct($product["product"]->value["id"]);
+
+                    $imagePath = $link->getBaseLink() . 'modules/' . $this->name .'/views/img/'.$maxAge.'.png';
+                    $this->smarty->assign(array(
+                        'img' => $imagePath
+                    ));
+
+                    return $this->display(__FILE__,'views/templates/hook/productAgePageProduct.tpl');
+                }
             }
 
         }
@@ -288,14 +311,56 @@ class ProductByAge extends Module
 
     public function hookDisplayAfterProductThumbs($params)
     {
-        if(Configuration::get('ACTIVATEAGE') == 1)
+
+        $link = new Link();
+
+        if(Configuration::get('ACTIVATEAGE') == 1 && Configuration::get('AGEPRODUCTPAGE') == 1)
         {
-            if(Configuration::get('AGEPRODUCTPAGE') == 1)
-            {
                 $existingInBdd = ProductAge::getExistInBdd($params["product"]["id_product"]);
+
+                if($existingInBdd == true)
+                {
+                    $maxAge = ProductAge::getMaxAgeByProduct($params["product"]["id_product"]);
+
+                    $imagePath = $link->getBaseLink() . 'modules/' . $this->name .'/views/img/'.$maxAge.'.png';
+                    $this->smarty->assign(array(
+                        'img' => $imagePath
+                    ));
+
+                    return $this->display(__FILE__,'views/templates/hook/productAgePageProduct.tpl');
+                }
+
+        }
+    }
+    //
+
+    //page home
+    public function hookDisplayContentWrapperBottom($params)
+    {
+
+        $link = new Link();
+        if(Configuration::get('ACTIVATEAGE') == 1 && Configuration::get('AGEHOMEACTIVE') == 1)
+        {
+            if($this->context->controller->php_self == "index")
+            {
+                $imagePath = $link->getBaseLink() . 'modules/' . $this->name .'/views/img/1.png';
+                $this->smarty->assign(array(
+                    'img' => $imagePath
+                ));
+        
+                
+                return $this->display(__FILE__,'views/templates/hook/displayContentWrapperTop.tpl');
+
             }
 
         }
     }
 
+    public function hookDisplayHeader()
+    {
+        if(Configuration::get('ACTIVATEAGE') == 1)
+        {
+            $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style.css');
+        }
+    }
 }
