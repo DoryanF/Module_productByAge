@@ -15,16 +15,9 @@ class ProductByAgeProductAgeModuleFrontController extends ModuleFrontController
 
         $test = ProductAge::getProductByMaxAge($dataAge);
 
-        $tab = [];
-        foreach ($test as $data) {
-            $product = new Product($data["id_product"]);
+        
 
-            $tab[] = $product;
-        }
-        $azert = $this->getProducts($dataAge);
-        // dump($azert);
         $this->context->smarty->assign(array(
-            'age' => $dataAge,
             'products' => $this->getProducts($dataAge)
         ));
 
@@ -38,8 +31,10 @@ class ProductByAgeProductAgeModuleFrontController extends ModuleFrontController
         $customer = $this->context->customer->id;
         
         $db = Db::getInstance();
-        $request = 'SELECT DISTINCT id_product FROM ' ._DB_PREFIX_.'product_age WHERE max_age <= ' . $age;
+        $request = 'SELECT DISTINCT id_product FROM ' ._DB_PREFIX_.'product_age WHERE max_age >= ' . $age;
         $result = $db->executeS($request);
+
+        $products = [];
 
         foreach($result as $rs){
 

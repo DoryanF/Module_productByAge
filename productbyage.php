@@ -64,6 +64,8 @@ class ProductByAge extends Module
         !$this->registerHook('actionProductUpdate') ||
         !$this->registerHook('displayContentWrapperBottom') ||
         !$this->registerHook('displayHeader') ||
+        !$this->registerHook('displayProductListReviews') ||
+        !$this->registerHook('displayLeftColumn') ||
         !$this->createTable()
         
         ) {
@@ -83,6 +85,8 @@ class ProductByAge extends Module
         !$this->unregisterHook('actionProductUpdate') ||
         !$this->unregisterHook('displayContentWrapperBottom') ||
         !$this->unregisterHook('displayHeader') ||
+        !$this->unregisterHook('displayProductListReviews') ||
+        !$this->unregisterHook('displayLeftColumn') ||
         !$this->deleteTable()
         
         ) {
@@ -236,7 +240,7 @@ class ProductByAge extends Module
     }
 
 
-
+//Hooks
     //admin product
     public function hookDisplayAdminProductsExtra($params)
     {
@@ -343,9 +347,24 @@ class ProductByAge extends Module
         {
             if($this->context->controller->php_self == "index")
             {
+
+                $imgFolderPath = _PS_MODULE_DIR_ . $this->name . '/views/img/';
+
+                $images = scandir($imgFolderPath);
+
+                $imagePaths = array();
+                foreach ($images as $image) {
+                    if ($image != '.' && $image != '..') {
+                        $imagePaths[] = $link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $image;
+                    }
+                }
+
+                natsort($imagePaths);
+
                 $imagePath = $link->getBaseLink() . 'modules/' . $this->name .'/views/img/1.png';
                 $this->smarty->assign(array(
-                    'img' => $imagePath
+                    'img' => $imagePath,
+                    'imgPath' => $imagePaths
                 ));
         
                 
@@ -363,4 +382,47 @@ class ProductByAge extends Module
             $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style.css');
         }
     }
+    //
+
+    //ProductList
+    public function hookDisplayProductListReviews($params)
+    {
+        if(Configuration::get('ACTIVATEAGE') == 1 && Configuration::get('AGEPRODUCTLIST') == 1)
+        {
+
+            $product_id = $params["product"]->id;
+
+            $existBdd = ProductAge::getExistInBdd($product_id);
+
+            if($existBdd)
+            {
+                $getAge = ProductAge::getProductAgeByProductId($product_id);
+                
+                $minAgeProduct = $getAge[0]["min_age"];
+                $maxAgeProduct = $getAge[0]["max_age"];
+
+                $this->smarty->assign(array(
+                    'min_age' => $minAgeProduct,
+                    'max_age' => $maxAgeProduct
+                ));
+
+                return $this->display(__FILE__,'views/templates/hook/productListReviews.tpl');
+            }
+
+        }
+
+    }
+    //
+
+    //Left Column Category
+    public function hookDisplayLeftColumn($params)
+    {
+        if(Configuration::get('ACTIVATEAGE') == 1)
+        {
+            
+            return $this->display(__FILE__, 'views/templates/hook/leftColumn.tpl');
+        }
+    }
+    //
+//
 }

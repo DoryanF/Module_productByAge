@@ -1,60 +1,48 @@
-{* <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img class="d-block" src="{$img}" alt="First slide" style="width: 15%; height:15%;">
-    </div>
-    <div class="carousel-item">
-      <img class="d-block" src="{$img}" alt="Second slide" style="width: 15%; height:15%;">
-    </div>
-    <div class="carousel-item">
-      <img class="d-block" src="{$img}" alt="Third slide" style="width: 15%; height:15%;">
-    </div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div> *}
-
 <div class="container_menu_age">
     <h3>By Age</h3>
-    <button class="scroll-btn" onclick="scrollMenu('prev')">Précédent</button>
+    <button class="scroll-btn left" onclick="scrollMenu('prev')">&#9664; Précédent</button>
     <ul class="menu_age">
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 1])}"><li class="item_menu_age"><img src="{$img}">1</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 2])}"><li class="item_menu_age"><img src="{$img}">2</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 3])}"><li class="item_menu_age"><img src="{$img}">3</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 4])}"><li class="item_menu_age"><img src="{$img}">4</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 5])}"><li class="item_menu_age"><img src="{$img}">5</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 6])}"><li class="item_menu_age"><img src="{$img}">6</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 7])}"><li class="item_menu_age"><img src="{$img}">7</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 8])}"><li class="item_menu_age"><img src="{$img}">8</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 9])}"><li class="item_menu_age"><img src="{$img}">9</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 10])}"><li class="item_menu_age"><img src="{$img}">10</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 11])}"><li class="item_menu_age"><img src="{$img}">11</li></a>
-    <a href="{$link->getModuleLink('productbyage','productage',['age' => 12])}"><li class="item_menu_age"><img src="{$img}">12</li></a>
-
+      {assign var=currentAge value=1}
+      {foreach from=$imgPath item=image}
+          <a href="{$link->getModuleLink('productbyage','productage',['age' => $currentAge])}">
+              <li class="item_menu_age"><img src="{$image}">{$currentAge}</li>
+          </a>
+          {assign var=currentAge value=$currentAge+1}
+      {/foreach}
     </ul>
-    <button class="scroll-btn" onclick="scrollMenu('next')">Suivant</button>
+    <button class="scroll-btn right" onclick="scrollMenu('next')">Suivant &#9654;</button>
 </div>
+
 
 <script>
     const menu = document.querySelector('.menu_age');
     const scrollBtns = document.querySelectorAll('.scroll-btn');
 
     let scrollPosition = 0;
-    const scrollStep = 100; // Vous pouvez ajuster la valeur selon votre besoin
+    const scrollStep = 5; // Vous pouvez ajuster la valeur selon votre besoin
+
 
     function scrollMenu(direction) {
-        if (direction === 'next') {
-            scrollPosition += scrollStep;
+      var items = document.querySelectorAll('.menu_age a');
+      var lastIndex = items.length - 1;
+
+      if (direction === 'next') {
+          items.forEach(function(item, index) {
+              if (index === 0) {
+                  item.style.marginRight = '-10%'; // Cacher le premier élément en déplaçant vers la gauche
+              } else if (index === lastIndex) {
+                  item.style.marginRight = '10px'; // Réinitialiser la position du dernier élément
+              }
+          });
         } else if (direction === 'prev') {
-            scrollPosition -= scrollStep;
-        }
-        menu.style.transform = "translateX(-" + scrollPosition + "%)";
+          items.forEach(function(item, index) {
+              if (index === 0) {
+                  item.style.marginRight = '-400px'; // Réinitialiser la position du premier élément
+              } else if (index === lastIndex) {
+                  item.style.marginRight = '-400px'; // Cacher le dernier élément en déplaçant vers la gauche
+              }
+          });
+      }
     }
 
     // Ajoutez des écouteurs d'événements aux boutons

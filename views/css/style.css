@@ -22,6 +22,34 @@
     height: auto;
 } */
 
+/*LeftColumn*/
+#search_filter_age{
+    padding: 1.563rem 1.25rem;
+    margin-bottom: 1.563rem;
+    background: #fff;
+}
+
+#search_filter_age section{
+    padding-top: 0;
+    text-align: center;
+}
+
+.productList_container_byAge{
+    margin-top: 4%;
+    text-align: center;
+}
+
+#search_filter_age section a{
+    color: inherit;
+}
+
+#search_filter_age section .item_menu_age{
+    display: block ruby;
+    margin-bottom: 2%;
+}
+/*Fin bloc LeftColumn*/
+
+/*Bloc menu/carousel home*/
 .container_menu_age h3{
     text-align: center;
 }
@@ -30,7 +58,13 @@
     display: flex;
     justify-content: space-around;
     overflow: hidden;
-    transition: transform 0.3s ease;
+    
+}
+
+.menu_age a {
+    color: inherit;
+    margin-right: -400px;
+    transition: margin-right 0.3s ease;
 }
 
 .item_menu_age {
@@ -38,8 +72,25 @@
 	flex-direction: column;
 	text-align: center;
 	width: 10%;
+    transform: translateX(120%);
 }
 
 .scroll-btn {
     cursor: pointer;
+    background: none;
+    border: none;
 }
+.left{
+    margin-right: auto;
+    position: absolute;
+    left: -10%;
+    bottom: 1%;
+}
+.right{
+    margin-left: auto;
+    position: absolute;
+    right: -7%;
+    bottom: 1%;
+}
+
+/*Fin bloc menu/carousel home*/
