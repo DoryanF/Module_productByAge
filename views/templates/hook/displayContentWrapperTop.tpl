@@ -1,6 +1,6 @@
 <div class="container_menu_age">
     <h3>By Age</h3>
-    <button class="scroll-btn left" onclick="scrollMenu('prev')">&#9664; Précédent</button>
+    <button class="scroll-btn left-btn" onclick="scrollMenu('prev')">&#9664; Précédent</button>
     <ul class="menu_age">
       {assign var=currentAge value=1}
       {foreach from=$imgPath item=image}
@@ -10,7 +10,7 @@
           {assign var=currentAge value=$currentAge+1}
       {/foreach}
     </ul>
-    <button class="scroll-btn right" onclick="scrollMenu('next')">Suivant &#9654;</button>
+    <button class="scroll-btn right-btn" onclick="scrollMenu('next')">Suivant &#9654;</button>
 </div>
 
 

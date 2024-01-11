@@ -62,17 +62,15 @@
     background: none;
     border: none;
 }
-.left-btn{
-    margin-right: auto;
-    position: absolute;
-    left: -10%;
-    bottom: 1%;
+.left-btn {
+	position: absolute;
+	left: 14%;
+	bottom: -209%;
 }
-.right-btn{
-    margin-left: auto;
-    position: absolute;
-    right: -7%;
-    bottom: 1%;
+.right-btn {
+	position: absolute;
+	right: 16%;
+	bottom: -209%;
 }
 
 /*Fin bloc menu/carousel home*/

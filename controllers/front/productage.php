@@ -12,13 +12,15 @@ class ProductByAgeProductAgeModuleFrontController extends ModuleFrontController
         parent::initContent();
 
         $dataAge = Tools::getValue('age');
+        $link = new Link();
 
-        $test = ProductAge::getProductByMaxAge($dataAge);
-
-        
+        $products = $this->getProducts($dataAge);
+        $baseUrl = $link->getBaseLink();
 
         $this->context->smarty->assign(array(
-            'products' => $this->getProducts($dataAge)
+            'products' => $products,
+            'base_url' => $baseUrl,
+            'noProductsMessage' => empty($products) ? $this->l('No product found') : null
         ));
 
         return $this->setTemplate('module:productbyage/views/templates/front/product_age_front_view.tpl');

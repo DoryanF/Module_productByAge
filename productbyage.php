@@ -48,7 +48,7 @@ class ProductByAge extends Module
         $this->bootstrap = true;
 
         $this->displayName = $this->l('Product by age');
-        $this->description = $this->l('Le module qui permet d\'ajouter l\'âge recommandé à vos produits');
+        $this->description = $this->l('The module that allows you to add the recommended age to your products');
 
         $this->confirmUninstall = $this->l('Do you want to delete this module');
     }
@@ -60,6 +60,8 @@ class ProductByAge extends Module
         !Configuration::updateValue('AGEPRODUCTLIST',0) ||
         !Configuration::updateValue('AGEPRODUCTPAGE',0) ||
         !Configuration::updateValue('AGEHOMEACTIVE',0) ||
+        !Configuration::updateValue('ACTIVETEXTAGEPRODUCTLIST',0) ||
+        !Configuration::updateValue('ACTIVELOGOAGEPRODUCTLIST',0) ||
         !$this->registerHook('displayAdminProductsExtra') ||
         !$this->registerHook('actionProductUpdate') ||
         !$this->registerHook('displayContentWrapperBottom') ||
@@ -81,6 +83,7 @@ class ProductByAge extends Module
         !Configuration::deleteByName('AGEPRODUCTLIST') ||
         !Configuration::deleteByName('AGEPRODUCTPAGE') ||
         !Configuration::deleteByName('AGEHOMEACTIVE') ||
+        !Configuration::deleteByName('ACTIVETEXTAGEPRODUCTLIST') ||
         !$this->unregisterHook('displayAdminProductsExtra') ||
         !$this->unregisterHook('actionProductUpdate') ||
         !$this->unregisterHook('displayContentWrapperBottom') ||
@@ -179,6 +182,42 @@ class ProductByAge extends Module
                             )
                         )
                 ],
+                [
+                    'type' => 'switch',
+                        'label' => $this->l('Display text on productlist ?'),
+                        'name' => 'ACTIVETEXTAGEPRODUCTLIST',
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'label2_on',
+                                'value' => 1,
+                                'label' => $this->l('Yes')
+                            ),
+                            array(
+                                'id' => 'label2_off',
+                                'value' => 0,
+                                'label' => $this->l('No')
+                            )
+                        )
+                ],
+                [
+                    'type' => 'switch',
+                        'label' => $this->l('Display logo on productlist ?'),
+                        'name' => 'ACTIVELOGOAGEPRODUCTLIST',
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'label2_on',
+                                'value' => 1,
+                                'label' => $this->l('Yes')
+                            ),
+                            array(
+                                'id' => 'label2_off',
+                                'value' => 0,
+                                'label' => $this->l('No')
+                            )
+                        )
+                ],
             ],
             'submit' => [
                 'title' => $this->l('save'),
@@ -197,6 +236,8 @@ class ProductByAge extends Module
         $helper->fields_value['AGEPRODUCTLIST'] = Configuration::get('AGEPRODUCTLIST');
         $helper->fields_value['AGEPRODUCTPAGE'] = Configuration::get('AGEPRODUCTPAGE');
         $helper->fields_value['AGEHOMEACTIVE'] = Configuration::get('AGEHOMEACTIVE');
+        $helper->fields_value['ACTIVETEXTAGEPRODUCTLIST'] = Configuration::get('ACTIVETEXTAGEPRODUCTLIST');
+        $helper->fields_value['ACTIVELOGOAGEPRODUCTLIST'] = Configuration::get('ACTIVELOGOAGEPRODUCTLIST');
 
         return $helper->generateForm($field_form);
     }
@@ -206,14 +247,18 @@ class ProductByAge extends Module
         if(Tools::isSubmit('saving'))
         {
             if(Validate::isBool(Tools::getValue('ACTIVATEAGE')) && Validate::isBool(Tools::getValue('AGEPRODUCTLIST')) 
-            && Validate::isBool(Tools::getValue('AGEPRODUCTPAGE')) && Validate::isBool(Tools::getValue('AGEHOMEACTIVE')) )
+            && Validate::isBool(Tools::getValue('AGEPRODUCTPAGE')) && Validate::isBool(Tools::getValue('AGEHOMEACTIVE')) 
+            && Validate::isBool(Tools::getValue('ACTIVETEXTAGEPRODUCTLIST')) && Validate::isBool(Tools::getValue('ACTIVELOGOAGEPRODUCTLIST'))
+            )
             {
                 Configuration::updateValue('ACTIVATEAGE',Tools::getValue('ACTIVATEAGE'));
                 Configuration::updateValue('AGEPRODUCTLIST',Tools::getValue('AGEPRODUCTLIST'));
                 Configuration::updateValue('AGEPRODUCTPAGE',Tools::getValue('AGEPRODUCTPAGE'));
                 Configuration::updateValue('AGEHOMEACTIVE',Tools::getValue('AGEHOMEACTIVE'));
+                Configuration::updateValue('ACTIVETEXTAGEPRODUCTLIST',Tools::getValue('ACTIVETEXTAGEPRODUCTLIST'));
+                Configuration::updateValue('ACTIVELOGOAGEPRODUCTLIST',Tools::getValue('ACTIVELOGOAGEPRODUCTLIST'));
 
-                return $this->displayConfirmation('Bien enregistré !');
+                return $this->displayConfirmation('Well recorded!');
             }
         }
     }
@@ -262,16 +307,7 @@ class ProductByAge extends Module
         $minAgeProduct = (int)Tools::getValue('min_age_product');
         $maxAgeProduct = (int)Tools::getValue('max_age_product');
 
-        // die('Product ID: ' . $productId . ', Min Age: ' . $minAgeProduct . ', Max Age: ' . $maxAgeProduct);
-
-        // $product = new Product($productId);
-        // $product->active = 1;
-        // $product->save();
-
         $existingInBdd = ProductAge::getExistInBdd($productId);
-
-        // var_dump($existingInBdd);
-        // die();
 
         if($existingInBdd !== false)
         {
@@ -361,9 +397,7 @@ class ProductByAge extends Module
 
                 natsort($imagePaths);
 
-                $imagePath = $link->getBaseLink() . 'modules/' . $this->name .'/views/img/1.png';
                 $this->smarty->assign(array(
-                    'img' => $imagePath,
                     'imgPath' => $imagePaths
                 ));
         
@@ -379,7 +413,14 @@ class ProductByAge extends Module
     {
         if(Configuration::get('ACTIVATEAGE') == 1)
         {
-            $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style.css');
+            if(_PS_VERSION_ < '8.0.0')
+            {
+                $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style-1_7.css');
+            }
+            else{
+                
+                $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style.css');
+            }
         }
     }
     //
@@ -387,6 +428,8 @@ class ProductByAge extends Module
     //ProductList
     public function hookDisplayProductListReviews($params)
     {
+        $link = new Link();
+
         if(Configuration::get('ACTIVATEAGE') == 1 && Configuration::get('AGEPRODUCTLIST') == 1)
         {
 
@@ -400,10 +443,14 @@ class ProductByAge extends Module
                 
                 $minAgeProduct = $getAge[0]["min_age"];
                 $maxAgeProduct = $getAge[0]["max_age"];
+                $imagePath = $link->getBaseLink() . 'modules/' . $this->name .'/views/img/'.$maxAgeProduct.'.png';
 
                 $this->smarty->assign(array(
                     'min_age' => $minAgeProduct,
-                    'max_age' => $maxAgeProduct
+                    'max_age' => $maxAgeProduct,
+                    'switch_text' => Configuration::get('ACTIVETEXTAGEPRODUCTLIST'),
+                    'switch_logo' => Configuration::get('ACTIVELOGOAGEPRODUCTLIST'),
+                    'img' => $imagePath
                 ));
 
                 return $this->display(__FILE__,'views/templates/hook/productListReviews.tpl');
@@ -419,6 +466,24 @@ class ProductByAge extends Module
     {
         if(Configuration::get('ACTIVATEAGE') == 1)
         {
+            $link = new Link();
+
+            $imgFolderPath = _PS_MODULE_DIR_ . $this->name . '/views/img/';
+
+            $images = scandir($imgFolderPath);
+
+            $imagePaths = array();
+            foreach ($images as $image) {
+                if ($image != '.' && $image != '..') {
+                    $imagePaths[] = $link->getBaseLink() . 'modules/' . $this->name . '/views/img/' . $image;
+                }
+            }
+
+            natsort($imagePaths);
+
+            $this->smarty->assign(array(
+                'imgPath' => $imagePaths
+            ));
             
             return $this->display(__FILE__, 'views/templates/hook/leftColumn.tpl');
         }

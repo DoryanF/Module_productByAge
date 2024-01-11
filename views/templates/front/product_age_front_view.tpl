@@ -1,9 +1,12 @@
 {extends file="page.tpl"}
 
 {block content}
-
-    {foreach from=$products item="product"}
-        {include file="catalog/_partials/miniatures/product.tpl" product=$product}
-    {/foreach}
-    
+    {if isset($noProductsMessage)}
+        <p>{$noProductsMessage}</p>
+        <a href="{$base_url}" class="btn btn-primary">Retour à la page d'accueil</a>
+    {else}
+        {foreach from=$products item="product"}
+            {include file="catalog/_partials/miniatures/product.tpl" product=$product}
+        {/foreach}
+    {/if}
 {/block}

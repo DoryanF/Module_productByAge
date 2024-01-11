@@ -1,21 +1,55 @@
-<div id="search_filter_age">
-    <section>
+<div class="container_menu_age_leftColumn">
+    <section style="text-align: center;">
         <p class="h6 text-uppercase facet-label">By Age</p>
+        <ul class="menu_age_leftColumn">
+        {assign var=currentAge value=1}
+        {foreach from=$imgPath item=image}
+            <a href="{$link->getModuleLink('productbyage','productage',['age' => $currentAge])}">
+                <li class="item_menu_age_leftColumn"><img src="{$image}" style="width: 15%;">{$currentAge} an(s)</li>
+            </a>
+            {assign var=currentAge value=$currentAge+1}
+        {/foreach}
+        </ul>
+    
+    </section>
+</div>
 
-        <ul>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 1])}"><li class="item_menu_age">1 an</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 2])}"><li class="item_menu_age">2 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 3])}"><li class="item_menu_age">3 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 4])}"><li class="item_menu_age">4 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 5])}"><li class="item_menu_age">5 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 6])}"><li class="item_menu_age">6 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 7])}"><li class="item_menu_age">7 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 8])}"><li class="item_menu_age">8 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 9])}"><li class="item_menu_age">9 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 10])}"><li class="item_menu_age">10 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 11])}"><li class="item_menu_age">11 ans</li></a>
-            <a href="{$link->getModuleLink('productbyage','productage',['age' => 12])}"><li class="item_menu_age">12 ans</li></a>
+{* <div class="container_menu_age_leftColumn">
+    <section style="text-align: center;">
+        <p class="h6 text-uppercase facet-label">By Age</p>
+        <ul class="menu_age_leftColumn">
+            {assign var=startAge value=1}
+            {assign var=endAge value=4}
+            {while $startAge <= 12}
+                {assign var=currentAge value="$startAge-$endAge"}
+                <li class="item_menu_age_leftColumn {$currentAge|replace:'-':'to'}">
+                    <a href="#" class="age-link" data-age="{$currentAge}">{$startAge} à {$endAge} an(s)</a>
+                </li>
+                {assign var=startAge value=$endAge+1}
+                {assign var=endAge value=$endAge+4}
+            {/while}
         </ul>
     </section>
-
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ageLinks = document.querySelectorAll('.age-link');
+    ageLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            var clickedAge = this.getAttribute('data-age');
+            var allImageContainers = document.querySelectorAll('.image-container');
+
+            allImageContainers.forEach(function(container) {
+                container.classList.remove('active');
+            });
+
+            var activeImageContainers = document.querySelectorAll('.image-container.' + 'age-' + clickedAge);
+            activeImageContainers.forEach(function(container) {
+                container.classList.add('active');
+            });
+        });
+    });
+});
+</script> *}
