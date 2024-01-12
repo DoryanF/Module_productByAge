@@ -3,6 +3,6 @@
         <p>De {$min_age} à {$max_age} ans</p>
     {/if}
     {if $switch_logo == 1}
-        <img src="{$img}" style="width: 20%;">
+        <img src="{$img}">
     {/if}
 </div>

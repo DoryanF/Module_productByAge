@@ -421,6 +421,11 @@ class ProductByAge extends Module
                 
                 $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style.css');
             }
+
+            if($this->context->controller->page_name == 'module-productbyage-productage')
+            {
+                $this->context->controller->registerStylesheet('css_carousel','modules/productbyage/views/css/style_front_controller.css');
+            }
         }
     }
     //

@@ -22,12 +22,22 @@
     display: block;
 }
 
-/* Ajoutez des règles pour chaque tranche d'âge */
-.age-1-to-4 .image-container.age-1-to-4,
-.age-5-to-8 .image-container.age-5-to-8,
-/* ... ajoutez les règles pour les autres tranches d'âge ... */
-.age-9-to-12 .image-container.age-9-to-12 {
-    display: block;
+.scroll-btn-leftColumn{
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+
+@media only screen and (max-width: 767px) {
+    .menu_age_leftColumn a:nth-child(n+7) {
+        display: none;
+    }
+    .scroll-btn-leftColumn{
+        cursor: pointer;
+        background: none;
+        border: none;
+    }
 }
 /*Fin bloc LeftColumn*/
 
@@ -38,23 +48,21 @@
 
 .menu_age {
     display: flex;
-    justify-content: space-around;
     overflow: hidden;
     
 }
 
 .menu_age a {
     color: inherit;
-    margin-right: -400px;
     transition: margin-right 0.3s ease;
+    width: 10%;
 }
 
 .item_menu_age {
     display: flex;
 	flex-direction: column;
 	text-align: center;
-	width: 10%;
-    transform: translateX(120%);
+    transform: translateX(0%);
 }
 
 .scroll-btn {
@@ -63,14 +71,47 @@
     border: none;
 }
 .left-btn {
+	margin-right: auto;
 	position: absolute;
 	left: 14%;
-	bottom: -209%;
+	bottom: -113%;
 }
 .right-btn {
+	margin-left: auto;
 	position: absolute;
-	right: 16%;
-	bottom: -209%;
+	right: 15%;
+	bottom: -113%;
+}
+
+@media only screen and (max-width: 767px) {
+    .right-btn {
+        bottom: -313%;
+        right: 0;
+    }
+
+    .left-btn {
+        left: 0;
+        bottom: -313%;
+    }
+
+    .menu_age a{
+        box-sizing: border-box;
+        width: 25%;
+    }
 }
 
 /*Fin bloc menu/carousel home*/
+
+/*Bloc ProductList */
+
+.productList_container_byAge{
+    text-align: center;
+}
+.productList_container_byAge img{
+     width: 20%;
+}
+
+@media only screen and (max-width: 767px) {
+    
+}
+/*Fin bloc*/

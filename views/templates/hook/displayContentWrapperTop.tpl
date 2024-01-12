@@ -17,35 +17,93 @@
 <script>
     const menu = document.querySelector('.menu_age');
     const scrollBtns = document.querySelectorAll('.scroll-btn');
-
+    const btnRight = document.querySelector('.right-btn');
+    const btnLeft = document.querySelector('.left-btn');
     let scrollPosition = 0;
-    const scrollStep = 5; // Vous pouvez ajuster la valeur selon votre besoin
+    var scrollStep = 5;
 
-
-    function scrollMenu(direction) {
-      var items = document.querySelectorAll('.menu_age a');
-      var lastIndex = items.length - 1;
-
-      if (direction === 'next') {
-          items.forEach(function(item, index) {
-              if (index === 0) {
-                  item.style.marginRight = '-10%'; // Cacher le premier élément en déplaçant vers la gauche
-              } else if (index === lastIndex) {
-                  item.style.marginRight = '10px'; // Réinitialiser la position du dernier élément
-              }
-          });
-        } else if (direction === 'prev') {
-          items.forEach(function(item, index) {
-              if (index === 0) {
-                  item.style.marginRight = '-400px'; // Réinitialiser la position du premier élément
-              } else if (index === lastIndex) {
-                  item.style.marginRight = '-400px'; // Cacher le dernier élément en déplaçant vers la gauche
-              }
-          });
-      }
+    var items = document.querySelectorAll('.menu_age a');
+    var currentMarginLeft = parseFloat(items[0].style.marginLeft) || 0;
+    
+    if(currentMarginLeft == 0)
+    {
+        btnLeft.disabled = true;
     }
 
-    // Ajoutez des écouteurs d'événements aux boutons
+    if(window.screen.width < 767)
+    {
+        scrollStep = 12;
+    }
+
+    function scrollMenu(direction) {
+        var items = document.querySelectorAll('.menu_age a');
+        var lastIndex = items.length - 1;
+
+        if (direction === 'next') {
+
+            var currentMarginLeft = parseFloat(items[0].style.marginLeft) || 0;
+            items[0].style.marginLeft = (currentMarginLeft - scrollStep) + '%';
+            
+            items[lastIndex].style.marginRight = '10px';
+
+            if (window.screen.width < 767)
+            {
+                // const scrollStep = 50;
+
+                if (currentMarginLeft <= -345) 
+                {                    
+                    btnRight.disabled = true;
+                } 
+
+                if(currentMarginLeft = -12)
+                {
+                    btnLeft.disabled = false;
+                }
+            }
+
+            if (currentMarginLeft <= -70) 
+            {                
+                btnRight.disabled = true;
+            } 
+
+            if(currentMarginLeft =5)
+            {
+                btnLeft.disabled = false;
+            }
+
+        } else if (direction === 'prev') {
+            
+            var currentMarginLeft = parseFloat(items[0].style.marginLeft) || 0;
+            items[0].style.marginLeft = (currentMarginLeft + scrollStep) + '%';
+
+            items[lastIndex].style.marginRight = '10px';
+
+            if(currentMarginLeft > -80)
+            {
+                btnRight.disabled = false;
+            }
+
+            if(currentMarginLeft == -5)
+            {
+                btnLeft.disabled = true;
+            }
+
+            if(window.screen.width < 767)
+            {
+                if(currentMarginLeft > -350)
+                {
+                    btnRight.disabled = false;
+
+                }
+
+                if(currentMarginLeft == -12)
+                {
+                    btnLeft.disabled = true;
+                }
+            }
+        }
+    }
+
     scrollBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const direction = btn.getAttribute('onclick').includes('prev') ? 'prev' : 'next';

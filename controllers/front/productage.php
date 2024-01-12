@@ -33,7 +33,7 @@ class ProductByAgeProductAgeModuleFrontController extends ModuleFrontController
         $customer = $this->context->customer->id;
         
         $db = Db::getInstance();
-        $request = 'SELECT DISTINCT id_product FROM ' ._DB_PREFIX_.'product_age WHERE max_age >= ' . $age;
+        $request = 'SELECT DISTINCT id_product FROM ' ._DB_PREFIX_.'product_age WHERE max_age = ' . $age;
         $result = $db->executeS($request);
 
         $products = [];
